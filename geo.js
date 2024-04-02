@@ -46,6 +46,7 @@ let mapsAnswered = 0;
 let attemptsLeft = 3;
 let timerInterval;
 
+
 function initializeGame() {
   if (mapsAnswered >= 10) {
     alert('You have answered the maximum number of maps. Your score: ' + correctAnswers + '/10');

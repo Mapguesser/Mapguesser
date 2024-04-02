@@ -38,99 +38,129 @@ const timerCheckbox = document.getElementById('timer-checkbox');
 const timerDisplay = document.getElementById('timer');
 const difficultySelect = document.getElementById('difficulty-select');
 const startGameButton = document.getElementById('start-game-button');
+
 let currentMapIndex;
 let correctAnswers = 0;
 let totalAttempts = 0;
+let mapsAnswered = 0;
+let attemptsLeft = 3;
 let timerInterval;
+
 function initializeGame() {
-    currentMapIndex = Math.floor(Math.random() * maps.length);
-    const currentMap = maps[currentMapIndex];
-    mapImage.src = currentMap.src;
-    mapImage.style.width = '350px';
-    resultMessage.textContent = '';
-    answerInput.value = '';
-    if (timerCheckbox.checked) {
-        startTimer();
-    }
-    submitButton.disabled = false;
-    adjustMapWidth(); // Call function to adjust map width
+  if (mapsAnswered >= 10) {
+    alert('You have answered the maximum number of maps. Your score: ' + correctAnswers + '/10');
+    return;
+  }
+currentMapIndex = Math.floor(Math.random() * maps.length);
+  const currentMap = maps[currentMapIndex];
+  mapImage.src = currentMap.src;
+  mapImage.style.width = '350px';
+  resultMessage.textContent = '';
+  answerInput.value = '';
+  attemptsLeft = 3;
+
+  if (timerCheckbox.checked) {
+    startTimer();
+  }
+
+  submitButton.disabled = false;
+  adjustMapWidth();
 }
 
 function adjustMapWidth() {
-    const screenWidth = window.innerWidth;
-    let mapWidth;
-
-    if (screenWidth < 750) {
-        mapWidth = '350px'; // Set width for smaller screens
-    } else {
-        mapWidth = '750px'; // Set default width for larger screens
-    }
-
-    mapImage.style.width = mapWidth; // Set map image width
+  const screenWidth = window.innerWidth;
+  let mapWidth;
+  if (screenWidth < 750) {
+    mapWidth = '350px';
+  } else {
+    mapWidth = '750px';
+  }
+  mapImage.style.width = mapWidth;
 }
+
 function checkAnswer() {
-    const userAnswer = parseInt(answerInput.value);
-    const currentMap = maps[currentMapIndex];
-    totalAttempts++;
-    if (userAnswer === currentMap.year) {
-        resultMessage.textContent = 'Correct!';
-        correctAnswers++;
+  const userAnswer = parseInt(answerInput.value);
+  const currentMap = maps[currentMapIndex];
+  totalAttempts++;
+
+  if (userAnswer === currentMap.year) {
+    resultMessage.textContent = 'Correct!';
+    correctAnswers++;
+    mapsAnswered++;
+  } else {
+    attemptsLeft--;
+    if (attemptsLeft > 0) {
+      resultMessage.textContent = `Incorrect. ${attemptsLeft} attempts left. Try again!`;
+      return;
     } else {
-        resultMessage.textContent = 'Incorrect. Try again!';
+      resultMessage.textContent = `Incorrect. The correct answer is ${currentMap.year}. Moving to the next map.`;
+      mapsAnswered++;
     }
-    scoreDisplay.textContent = `Score: ${correctAnswers}/${totalAttempts}`;
-    if (timerCheckbox.checked) {
-        clearInterval(timerInterval);
-    }
-    setTimeout(initializeGame, 2000);
+  }
+
+  scoreDisplay.textContent = `Score: ${correctAnswers}/${mapsAnswered}`;
+if (timerCheckbox.checked) {
+    clearInterval(timerInterval);
+  }
+
+  setTimeout(initializeGame, 2000);
 }
+
 function startTimer() {
-    const difficulty = difficultySelect.value;
-    let duration;
-    switch (difficulty) {
-        case 'easy':
-duration = 30 * 60 * 1000;
-            break;
-        case 'medium':
-            duration = 10 * 60 * 1000;
-            break;
-        case 'hard':
-            duration = 5 * 60 * 1000;
-            break;
-        case 'expert':
-            duration = 2 * 60 * 1000;
-            break;
-        default:
-            duration = 30 * 60 * 1000;
+  const difficulty = difficultySelect.value;
+  let duration;
+
+  switch (difficulty) {
+    case 'easy':
+      duration = 30 * 60 * 1000;
+      break;
+    case 'medium':
+      duration = 10 * 60 * 1000;
+      break;
+    case 'hard':
+      duration = 5 * 60 * 1000;
+      break;
+    case 'expert':
+      duration = 2 * 60 * 1000;
+      break;
+    default:
+      duration = 30 * 60 * 1000;
+  }
+
+  let startTime = Date.now();
+  timerInterval = setInterval(function () {
+    let elapsedTime = Date.now() - startTime;
+    let remainingTime = duration - elapsedTime;
+
+    if (remainingTime <= 0) {
+      clearInterval(timerInterval);
+      timerDisplay.textContent = "Time's up!";
+    } else {
+      let minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+      timerDisplay.textContent = `Time: ${minutes}m ${seconds}s`;
     }
-    let startTime = Date.now();
-    timerInterval = setInterval(function () {
-        let elapsedTime = Date.now() - startTime;
-        let remainingTime = duration - elapsedTime;
-        if (remainingTime <= 0) {
-            clearInterval(timerInterval);
-            timerDisplay.textContent = 'Time\'s up!';
-        } else {
-            let minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-            timerDisplay.textContent = `Time: ${minutes}m ${seconds}s`;
-        }
-    }, 1000);
+  }, 1000);
 }
+
 submitButton.addEventListener('click', function () {
-    if (!currentMapIndex)
-        return;
-    checkAnswer();
+  if (!currentMapIndex) return;
+  checkAnswer();
 });
+
 repeatButton.addEventListener('click', function () {
-    initializeGame();
-    correctAnswers = 0;
-    totalAttempts = 0;
-    scoreDisplay.textContent = `Score: ${correctAnswers}/${totalAttempts}`;
+  initializeGame();
+  correctAnswers = 0;
+  totalAttempts = 0;
+  mapsAnswered = 0;
+  scoreDisplay.textContent = `Score: ${correctAnswers}/10`;
 });
+
 startGameButton.addEventListener('click', initializeGame);
-window.onload = function() {
-    initializeGame();
-    submitButton.disabled = true;
+
+window.onload = function () {
+  initializeGame();
+  submitButton.disabled = true;
 };
+
 window.addEventListener('resize', adjustMapWidth);

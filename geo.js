@@ -46,10 +46,10 @@ let mapsAnswered = 0;
 let attemptsLeft = 3;
 let timerInterval;
 
-
 function initializeGame() {
   if (mapsAnswered >= 10) {
-    alert('You have answered the maximum number of maps. Your score: ' + correctAnswers + '/10');
+    resultMessage.textContent = 'You have answered all maps. Your score: ' + correctAnswers + '/10';
+    repeatButton.style.display = 'inline';
     return;
   }
 currentMapIndex = Math.floor(Math.random() * maps.length);
@@ -98,9 +98,9 @@ function checkAnswer() {
       mapsAnswered++;
     }
   }
+scoreDisplay.textContent = `Score: ${correctAnswers}/${mapsAnswered}`;
 
-  scoreDisplay.textContent = `Score: ${correctAnswers}/${mapsAnswered}`;
-if (timerCheckbox.checked) {
+  if (timerCheckbox.checked) {
     clearInterval(timerInterval);
   }
 

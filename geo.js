@@ -1,5 +1,5 @@
 const maps = [
-    { src: 'map1.jpg', year: 1908 },
+    { src: 'map1.png', year: 1908 },
     { src: 'map2.png', year: 1789 },
     { src: 'map3.png', year: 1900 },
     { src: 'map4.png', year: 1914 },

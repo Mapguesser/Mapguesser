@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the map</title>
+    <link rel="stylesheet" href="geo.css">
+</head>
+<body>
+    <div id="map-container">
+        <h2>Guess which year this map is from?</h2>
+        <p id="timer"></p>
+        <p id="score">Score: 0/0</p>
+        <img id="map-image" src="" alt="Map Image">
+        <div id="input-container">
+            <input type="text" id="answer-input" placeholder="Enter the year">
+            <button id="submit-button">Submit Answer</button>
+        </div>
+        <p id="result-message"></p>
+        <button id="repeat-button">Repeat</button>
+        <button id="start-game-button">Start Game</button>
+        <div id="options-container">
+            <input type="checkbox" id="timer-checkbox">
+            <label for="timer-checkbox">Enable Timer</label>
+            <select id="difficulty-select">
+                <option value="easy">Easy (30 minutes)</option>
+                <option value="medium">Medium (10 minutes)</option>
+                <option value="hard">Hard (5 minutes)</option>
+                <option value="expert">Expert (2 minutes)</option>
+            </select>
+        </div>
+    </div>
+
+    <script src="geo.js"></script>
+</body>
+</html>

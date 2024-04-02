@@ -1,0 +1,136 @@
+const maps = [
+    { src: 'map1.jpg', year: 1908 },
+    { src: 'map2.png', year: 1789 },
+    { src: 'map3.png', year: 1900 },
+    { src: 'map4.png', year: 1914 },
+    { src: 'map5.png', year: 1930 },
+    { src: 'map6.png', year: 1935 },
+    { src: 'map7.png', year: 1938 },
+    { src: 'map8.png', year: 1942 },
+    { src: 'map9.png', year: 1946 },
+    { src: 'map10.png', year: 1965 },
+    { src: 'map11.png', year: 1970 },
+    { src: 'map12.png', year: 1972 },
+    { src: 'map13.png', year: 1989 },
+    { src: 'map14.png', year: 1990 },
+    { src: 'map15.png', year: 1991 },
+    { src: 'map16.png', year: 1992 },
+    { src: 'map17.png', year: 1993 },
+    { src: 'map18.png', year: 2001 },
+    { src: 'map19.png', year: 2010 },
+    { src: 'map20.png', year: 2012 },
+    { src: 'map21.png', year: 2013 },
+    { src: 'map22.png', year: 2015 },
+    { src: 'map23.png', year: 2016 },
+    { src: 'map24.png', year: 2018 },
+    { src: 'map25.png', year: 2021 },
+    { src: 'map26.png', year: 2022 },
+    { src: 'map27.png', year: 2023 },
+];
+const mapContainer = document.getElementById('map-container');
+const mapImage = document.getElementById('map-image');
+const answerInput = document.getElementById('answer-input');
+const submitButton = document.getElementById('submit-button');
+const resultMessage = document.getElementById('result-message');
+const scoreDisplay = document.getElementById('score');
+const repeatButton = document.getElementById('repeat-button');
+const timerCheckbox = document.getElementById('timer-checkbox');
+const timerDisplay = document.getElementById('timer');
+const difficultySelect = document.getElementById('difficulty-select');
+const startGameButton = document.getElementById('start-game-button');
+let currentMapIndex;
+let correctAnswers = 0;
+let totalAttempts = 0;
+let timerInterval;
+function initializeGame() {
+    currentMapIndex = Math.floor(Math.random() * maps.length);
+    const currentMap = maps[currentMapIndex];
+    mapImage.src = currentMap.src;
+    mapImage.style.width = '350px';
+    resultMessage.textContent = '';
+    answerInput.value = '';
+    if (timerCheckbox.checked) {
+        startTimer();
+    }
+    submitButton.disabled = false;
+    adjustMapWidth(); // Call function to adjust map width
+}
+
+function adjustMapWidth() {
+    const screenWidth = window.innerWidth;
+    let mapWidth;
+
+    if (screenWidth < 750) {
+        mapWidth = '350px'; // Set width for smaller screens
+    } else {
+        mapWidth = '750px'; // Set default width for larger screens
+    }
+
+    mapImage.style.width = mapWidth; // Set map image width
+}
+function checkAnswer() {
+    const userAnswer = parseInt(answerInput.value);
+    const currentMap = maps[currentMapIndex];
+    totalAttempts++;
+    if (userAnswer === currentMap.year) {
+        resultMessage.textContent = 'Correct!';
+        correctAnswers++;
+    } else {
+        resultMessage.textContent = 'Incorrect. Try again!';
+    }
+    scoreDisplay.textContent = `Score: ${correctAnswers}/${totalAttempts}`;
+    if (timerCheckbox.checked) {
+        clearInterval(timerInterval);
+    }
+    setTimeout(initializeGame, 2000);
+}
+function startTimer() {
+    const difficulty = difficultySelect.value;
+    let duration;
+    switch (difficulty) {
+        case 'easy':
+duration = 30 * 60 * 1000;
+            break;
+        case 'medium':
+            duration = 10 * 60 * 1000;
+            break;
+        case 'hard':
+            duration = 5 * 60 * 1000;
+            break;
+        case 'expert':
+            duration = 2 * 60 * 1000;
+            break;
+        default:
+            duration = 30 * 60 * 1000;
+    }
+    let startTime = Date.now();
+    timerInterval = setInterval(function () {
+        let elapsedTime = Date.now() - startTime;
+        let remainingTime = duration - elapsedTime;
+        if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = 'Time\'s up!';
+        } else {
+            let minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            timerDisplay.textContent = `Time: ${minutes}m ${seconds}s`;
+        }
+    }, 1000);
+}
+submitButton.addEventListener('click', function () {
+    if (!currentMapIndex)
+        return;
+    checkAnswer();
+});
+repeatButton.addEventListener('click', function () {
+    initializeGame();
+    correctAnswers = 0;
+    totalAttempts = 0;
+    scoreDisplay.textContent = `Score: ${correctAnswers}/${totalAttempts}`;
+});
+startGameButton.addEventListener('click', initializeGame);
+window.onload = function() {
+    initializeGame();
+    submitButton.disabled = true;
+};
+window.addEventListener('resize', adjustMapWidth);

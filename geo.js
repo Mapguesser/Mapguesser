@@ -165,3 +165,5 @@ window.onload = function () {
 };
 
 window.addEventListener('resize', adjustMapWidth);
+
+(adsbygoogle = window.adsbygoogle || []).push({});
